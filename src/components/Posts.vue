@@ -110,7 +110,6 @@ function handelComment(postId) {
                 <Comments
                   :comments="post.comments"
                   :postID="post.id"
-                  :commentData="commentData"
                   @handelDeleteCom="handelDeleteCom"
                 />
               </div>
