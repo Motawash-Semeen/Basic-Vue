@@ -4,6 +4,7 @@ import moment from "moment";
 import Swal from "sweetalert2";
 import Posts from "./components/Posts.vue";
 import Form from "./components/Form.vue";
+import Layout from "./components/Layout.vue";
 
 var posts = ref([
   {
@@ -29,9 +30,7 @@ var posts = ref([
     content:
       "This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
     likes: 4,
-    comments: [
-      
-    ],
+    comments: [],
     date: "2024-05-24 11:00:00",
     showComments: false,
   },
@@ -60,6 +59,7 @@ var posts = ref([
   },
 ]);
 
+var userName = ref("Semeen Chowdhury");
 watch(
   () => posts.value.length,
   (newPostslength, oldPostslength) => {
@@ -167,61 +167,18 @@ function showComment(postId) {
 </script>
 
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-    <div class="container">
-      <a class="navbar-brand" href="#">BAT Blog</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav mb-2 mb-lg-0">
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              John Doe
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="#">Profile</a></li>
-              <li><a class="dropdown-item" href="#">Logout</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <Form :formData="formData" @handelSubmit="handelSubmit"/>
-
-  <Posts
-    :posts="posts"
-    :commentData="commentData"
-    @handelLike="handelLike"
-    @handelDelete="handelDelete"
-    @showComment="showComment"
-    @handelDeleteCom="handelDeleteCom"
-    @handelComment="handelComment"
-  />
+  <Layout :userName="userName">
+    <Form :formData="formData" @handelSubmit="handelSubmit" class="bg-light" style="padding: 10px; border-radius: 12px;"/>
+    <Posts
+      :posts="posts"
+      :commentData="commentData"
+      @handelLike="handelLike"
+      @handelDelete="handelDelete"
+      @showComment="showComment"
+      @handelDeleteCom="handelDeleteCom"
+      @handelComment="handelComment"
+    />
+  </Layout>
 </template>
 
 <style scoped>
