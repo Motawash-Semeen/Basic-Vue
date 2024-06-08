@@ -1,17 +1,19 @@
 <script setup>
-import { defineProps, defineEmits, computed, toRefs, ref, watch } from "vue";
+import { defineProps, defineEmits, computed, toRefs, defineModel, inject, onUpdated } from "vue";
 import moment from "moment";
 import Comments from "./Comments.vue";
 
-const props = defineProps({
-  posts: {
-    type: Array,
-    required: true,
-  },
-  commentData: {
-    type: Object,
-  },
-});
+// const props = defineProps({
+//   // posts: {
+//   //   type: Array,
+//   //   required: true,
+//   // },
+//   // commentData: {
+//   //   type: Object,
+//   // },
+// });
+
+const commentData = defineModel("comment");
 
 const emit = defineEmits([
   "handelDelete",
@@ -23,7 +25,9 @@ const emit = defineEmits([
 
 /*const posts = ref(props.posts);*/
 
-const { posts, commentData } = toRefs(props);
+/* const { posts, commentData } = toRefs(props); */
+
+const posts = inject("posts");
 
 const revposts = computed(() => [...posts.value].reverse());
 
@@ -41,8 +45,11 @@ function handelDeleteCom(commentId, postId) {
 }
 function handelComment(postId) {
   emit("handelComment", postId);
-  console.log("test", postId);
 }
+
+onUpdated(() => {
+  console.log("Posts updated");
+});
 </script>
 
 <template>
@@ -90,7 +97,6 @@ function handelComment(postId) {
               <div
                 class="comments mb-3"
                 id="comment"
-                v-show="post.showComments"
               >
                 <div class="comments-input d-flex mb-3">
                   <input
@@ -110,6 +116,7 @@ function handelComment(postId) {
                 <Comments
                   :comments="post.comments"
                   :postID="post.id"
+                  :showComments="post.showComments"
                   @handelDeleteCom="handelDeleteCom"
                 />
               </div>

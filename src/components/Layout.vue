@@ -1,9 +1,16 @@
 <script setup>
-import { defineProps, ref, watch } from "vue";
+// import { defineProps, ref } from "vue";
+import { inject, defineEmits,defineProps, ref, computed } from "vue";
 
-const props = defineProps(["userName"]);
-const userName = ref(props.userName);
-
+// const props = defineProps(["userName"]);
+// const userName = ref(props.userName);
+const props = defineProps(["currentComp"]);
+const currentComp = computed(() => props.currentComp);
+const userName = inject("userName");
+const emit = defineEmits(["handelTab"]);
+function handelTab(e) {
+  emit("handelTab", e);
+}
 </script>
 
 <template>
@@ -23,11 +30,11 @@ const userName = ref(props.userName);
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <li class="nav-item" @click="handelTab($event)">
+            <a :class="{'active': currentComp == 'posts', 'nav-link': true }" aria-current="page" href="#">Posts</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+          <li class="nav-item" @click="handelTab($event)">
+            <a :class="{'active': currentComp == 'create-post', 'nav-link': true }" href="#">Create Post</a>
           </li>
         </ul>
         <ul class="navbar-nav mb-2 mb-lg-0">

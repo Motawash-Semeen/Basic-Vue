@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, provide } from "vue";
 import moment from "moment";
 import Swal from "sweetalert2";
 import Posts from "./components/Posts.vue";
@@ -59,7 +59,8 @@ var posts = ref([
   },
 ]);
 
-var userName = ref("Semeen Chowdhury");
+// var userName = ref("Semeen Chowdhury");
+
 watch(
   () => posts.value.length,
   (newPostslength, oldPostslength) => {
@@ -164,12 +165,33 @@ function showComment(postId) {
   var post = posts.value.find((post) => post.id === postId);
   post.showComments = !post.showComments;
 }
+
+const currentComp = ref("posts");
+
+function handelTab(e) {
+  if(e.target.innerText === "Posts") {
+    currentComp.value = "posts";
+  } else {
+    currentComp.value = "create-post";
+  }
+}
+
+provide("posts", posts);
 </script>
 
 <template>
-  <Layout :userName="userName">
-    <Form :formData="formData" @handelSubmit="handelSubmit" class="bg-light" style="padding: 10px; border-radius: 12px;"/>
+  <Layout :userName="userName" :currentComp="currentComp" @handelTab="handelTab">
+    <Form v-if="currentComp == 'create-post'" :formData="formData" @handelSubmit="handelSubmit" class="bg-light" style="padding: 10px; border-radius: 12px;"/>
     <Posts
+      v-else-if="currentComp == 'posts'"
+      v-model:comment="commentData"
+      @handelLike="handelLike"
+      @handelDelete="handelDelete"
+      @showComment="showComment"
+      @handelDeleteCom="handelDeleteCom"
+      @handelComment="handelComment"
+    />
+    <!-- <Posts
       :posts="posts"
       :commentData="commentData"
       @handelLike="handelLike"
@@ -177,7 +199,7 @@ function showComment(postId) {
       @showComment="showComment"
       @handelDeleteCom="handelDeleteCom"
       @handelComment="handelComment"
-    />
+    /> -->
   </Layout>
 </template>
 

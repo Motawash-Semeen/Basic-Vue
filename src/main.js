@@ -9,5 +9,5 @@ import router from './router'
 const app = createApp(App)
 
 app.use(router)
-
+app.provide('userName', 'Semeen Chowdhury')
 app.mount('#app')
