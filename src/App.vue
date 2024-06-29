@@ -10,64 +10,8 @@ import { useStore } from "vuex";
 
 const store = useStore();
 
-// var posts = ref(store.state.posts);
+const posts = computed(() => store.getters["posts/getPosts"]);
 
-var posts = ref(store.getters["posts/getPosts"]);
-
-// var posts = ref([
-//   {
-//     id: 1,
-//     title: "Post 1",
-//     content:
-//       "This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-//     likes: 0,
-//     comments: [
-//       {
-//         id: 1,
-//         user: "John Doe1",
-//         date: "2024-05-24 11:00:00",
-//         content: "This is a comment.",
-//       },
-//     ],
-//     date: "2024-05-24 11:00:00",
-//     showComments: false,
-//   },
-//   {
-//     id: 2,
-//     title: "Post 2",
-//     content:
-//       "This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-//     likes: 4,
-//     comments: [],
-//     date: "2024-05-24 11:00:00",
-//     showComments: false,
-//   },
-//   {
-//     id: 3,
-//     title: "Post 3",
-//     content:
-//       "This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-//     likes: 5,
-//     comments: [
-//       {
-//         id: 1,
-//         user: "John Doe4",
-//         date: "2024-05-24 11:00:00",
-//         content: "This is a comment.",
-//       },
-//       {
-//         id: 2,
-//         user: "John Doe5",
-//         date: "2024-05-24 11:00:00",
-//         content: "This is a comment.",
-//       },
-//     ],
-//     date: "2024-05-24 11:00:00",
-//     showComments: false,
-//   },
-// ]);
-
-// var userName = ref("Semeen Chowdhury");
 
 watch(
   () => posts.value.length,
@@ -110,60 +54,27 @@ const commentData = ref({
 
 function handelLike(postId) {
   const post = posts.value.find((post) => post.id === postId);
-  console.log("post", postId);
   post.likes++;
 }
 
-function handelDelete(postId) {
-  console.log("post", postId);
-  posts.value = posts.value.filter((post) => post.id !== postId);
-  return posts.value;
-}
-
-function handelSubmit(event) {
-  // event.preventDefault();
-  // if (!formData.value.title || !formData.value.content) {
-  //   Swal.fire({
-  //     text: "Please fill all the fields!",
-  //     icon: "error",
-  //     confirmButtonText: "ok",
-  //   });
-  //   formData.value.title = "";
-  //   formData.value.content = "";
-  //   return;
-  // }
-  // posts.value.push({
-  //   id: posts.value.length + 1,
-  //   title: formData.value.title,
-  //   content: formData.value.content,
-  //   likes: 0,
-  //   comments: [],
-  //   date: moment().format("YYYY-MM-DD HH:mm:ss"),
-  //   showComments: false,
-  // });
-
-  // formData.value.title = "";
-  // formData.value.content = "";
-}
-function handelComment(postId) {
-  const post = posts.value.find((post) => post.id === postId);
-  if (!commentData.value.content[postId]) {
-    Swal.fire({
-      text: "Please fill the comment field!",
-      icon: "error",
-      confirmButtonText: "ok",
-    });
-    return;
-  }
-  post.comments.push({
-    id: post.comments.length + 1,
-    user: "John Doe",
-    date: moment().format("YYYY-MM-DD HH:mm:ss"),
-    content: commentData.value.content[postId],
-  });
-  commentData.value.content[postId] = "";
-  console.log("test");
-}
+// function handelComment(postId) {
+//   const post = posts.value.find((post) => post.id === postId);
+//   if (!commentData.value.content[postId]) {
+//     Swal.fire({
+//       text: "Please fill the comment field!",
+//       icon: "error",
+//       confirmButtonText: "ok",
+//     });
+//     return;
+//   }
+//   post.comments.push({
+//     id: post.comments.length + 1,
+//     user: "John Doe",
+//     date: moment().format("YYYY-MM-DD HH:mm:ss"),
+//     content: commentData.value.content[postId],
+//   });
+//   commentData.value.content[postId] = "";
+// }
 
 function handelDeleteCom(commentId, postId) {
   const post = posts.value.find((post) => post.id === postId);
@@ -185,7 +96,6 @@ function handelTab(e) {
   }
 }
 
-provide("posts", posts);
 </script>
 
 <template>
@@ -195,20 +105,9 @@ provide("posts", posts);
       v-else-if="currentComp == 'posts'"
       v-model:comment="commentData"
       @handelLike="handelLike"
-      @handelDelete="handelDelete"
       @showComment="showComment"
       @handelDeleteCom="handelDeleteCom"
-      @handelComment="handelComment"
     />
-    <!-- <Posts
-      :posts="posts"
-      :commentData="commentData"
-      @handelLike="handelLike"
-      @handelDelete="handelDelete"
-      @showComment="showComment"
-      @handelDeleteCom="handelDeleteCom"
-      @handelComment="handelComment"
-    /> -->
   </Layout>
 </template>
 

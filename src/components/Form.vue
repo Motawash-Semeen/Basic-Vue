@@ -2,42 +2,28 @@
 import moment from "moment";
 import Swal from "sweetalert2";
 
-import { toRefs, defineProps, defineEmits  } from "vue";
+import { toRefs, defineProps, defineEmits, computed  } from "vue";
 
-const props = defineProps(["formData"]);
+// const props = defineProps(["formData"]);
 // const emit = defineEmits(["handelSubmit"]);
 
-const { formData } = toRefs(props);
+// const { formData } = toRefs(props);
 
 import { useStore } from "vuex";
 const store = useStore();
 
+const postTitle = computed(() => store.getters["posts/postTitle"]);
+const postContent = computed(() => store.getters["posts/postContent"]);
+
 function handelSubmit(event) {
-  if (!formData.value.title || !formData.value.content) {
-    Swal.fire({
-      text: "Please fill all the fields!",
-      icon: "error",
-      confirmButtonText: "ok",
-    });
-    formData.value.title = "";
-    formData.value.content = "";
-    return;
-  }
-  const post = {
-    id: store.posts.length + 1,
-    title: formData.value.title,
-    content: formData.value.content,
-    likes: 0,
-    comments: [],
-    date: moment().format("YYYY-MM-DD HH:mm:ss"),
-    showComments: false,
-  };
+  store.commit("posts/createPost");
+}
 
-  store.commit("posts/createPost", post);
-
-  formData.value.title = "";
-  formData.value.content = "";
-  // emit("handelSubmit", event)
+function updatePostTitle(event) {
+  store.commit("posts/updatePostTitle", event.target.value);
+}
+function updatePostContent(event) {
+  store.commit("posts/updatePostContent", event.target.value);
 }
 </script>
 
@@ -56,7 +42,7 @@ function handelSubmit(event) {
                   class="form-control"
                   id="title"
                   placeholder="Enter the title"
-                  v-model="formData.title"
+                  :value="postTitle" @input="updatePostTitle"
                 />
               </div>
               <div class="mb-3">
@@ -66,7 +52,7 @@ function handelSubmit(event) {
                   id="content"
                   rows="3"
                   placeholder="Enter the content"
-                  v-model="formData.content"
+                  :value="postContent" @input="updatePostContent"
                 ></textarea>
               </div>
               <button type="submit" class="btn btn-success">Submit</button>

@@ -1,3 +1,5 @@
+import moment from "moment";
+import Swal from "sweetalert2";
 
 const postModule = {
   namespaced: true, 
@@ -57,21 +59,66 @@ const postModule = {
           showComments: false,
         },
       ],
+      postTitle: "",
+      postContent: "",
     };
   },
   getters: {
     getPosts(state) {
       return state.posts;
+    },
+    getPostTitle(state) {
+      return state.postTitle;
+    },
+    getPostContent(state) {
+      return state.postContent;
     }
   },
   mutations:{
-    createPost(state, post){
-      state.posts.push(post); 
+    createPost(state){
+      if(!state.postTitle || !state.postContent) {
+        Swal.fire({
+          text: "Please fill all the fields!",
+          icon: "error",
+          confirmButtonText: "ok",
+        });
+        return;
+      }
+      const post = {
+        id: Math.max(...state.posts.map((post) => post.id)) + 1,
+        title: state.postTitle,
+        content: state.postContent,
+        likes: 0,
+        comments: [],
+        date: moment().format("YYYY-MM-DD HH:mm:ss"),
+        showComments: false,
+      };
+      state.posts.push(post);
+      state.postTitle = "";
+      state.postContent = ""; 
+      
     },
     addComment(state, {comment, postId}){
       const post = state.posts.find((post) => post.id === postId);
       post.comments.push(comment);
       post.showComments = true;
+    },
+    deletePost(state, postId){
+      state.posts = state.posts.filter((post) => post.id !== postId);
+    },
+    deleteComment(state, {postId, commentId}) {
+      const post = state.posts.find((post) => post.id === postId);
+      post.comments = post.comments.filter((comment) => comment.id !== commentId);
+    },
+    handelLike(state, postId){
+      const post = state.posts.find((post) => post.id === postId);
+      post.likes++;
+    },
+    updatePostTitle(state, title){
+      state.postTitle = title;
+    },
+    updatePostContent(state, content){
+      state.postContent = content;
     }
   },
   actions:{
@@ -79,6 +126,14 @@ const postModule = {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       comment.user = rootState.userName;
       commit('addComment', {comment, postId});
+    },
+    async deletePost({state, commit}, postId){
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      commit('deletePost', postId);
+    },
+    async deleteComment({state, commit}, {postId, commentId}){
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      commit('deleteComment', {postId, commentId});
     }
   
   }

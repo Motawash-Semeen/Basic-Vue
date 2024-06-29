@@ -3,6 +3,9 @@ import { defineProps, defineEmits, computed, ref, watch, toRefs, onMounted, onBe
 import moment from "moment";
 import Swal from "sweetalert2";
 
+import { useStore } from "vuex";
+const store = useStore();
+
 const props = defineProps(["comments", "postID", "showComments"]);
 const { comments, showComments } = toRefs(props);
 
@@ -20,7 +23,8 @@ const emit = defineEmits({
 });
 
 function handelDeleteCom(commentId, postId) {
-  emit("handelDeleteCom", commentId, postId);
+  // emit("handelDeleteCom", commentId, postId);
+  store.dispatch("posts/deleteComment", { commentId, postId });
 }
 
 watch(

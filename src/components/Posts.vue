@@ -1,5 +1,13 @@
 <script setup>
-import { defineProps, defineEmits, computed, toRefs, defineModel, inject, onUpdated } from "vue";
+import {
+  defineProps,
+  defineEmits,
+  computed,
+  toRefs,
+  defineModel,
+  ref,
+  onUpdated,
+} from "vue";
 import moment from "moment";
 import Comments from "./Comments.vue";
 import Swal from "sweetalert2";
@@ -7,47 +15,33 @@ import Swal from "sweetalert2";
 import { useStore } from "vuex";
 
 const store = useStore();
-
-// const props = defineProps({
-//   // posts: {
-//   //   type: Array,
-//   //   required: true,
-//   // },
-//   // commentData: {
-//   //   type: Object,
-//   // },
-// });
+const posts = computed(() => store.getters["posts/getPosts"]);
+const revposts = computed(() => [...posts.value].reverse());
 
 const commentData = defineModel("comment");
 
 const emit = defineEmits([
-  "handelDelete",
-  "handelLike",
+  // "handelDelete",
+  // "handelLike",
   "showComment",
-  // "handelComment",
-  "handelDeleteCom",
+  // "handelDeleteCom",
 ]);
 
-/*const posts = ref(props.posts);*/
-
-/* const { posts, commentData } = toRefs(props); */
-
-const posts = inject("posts");
-
-const revposts = computed(() => [...posts.value].reverse());
-
 function handelDelete(postId) {
-  emit("handelDelete", postId);
+  store.commit("posts/deletePost", postId);
+
+  // emit("handelDelete", postId);
 }
 function handelLike(postId) {
-  emit("handelLike", postId);
+  store.commit("posts/handelLike", postId);
+  // emit("handelLike", postId);
 }
 function showComment(postId) {
   emit("showComment", postId);
 }
-function handelDeleteCom(commentId, postId) {
-  emit("handelDeleteCom", commentId, postId);
-}
+// function handelDeleteCom(commentId, postId) {
+//   emit("handelDeleteCom", commentId, postId);
+// }
 function handelComment(postId) {
   const post = posts.value.find((post) => post.id === postId);
   if (!commentData.value.content[postId]) {
@@ -60,12 +54,11 @@ function handelComment(postId) {
   }
   const comment = {
     id: post.comments.length + 1,
-    // user: store.state.userName || "John Doe",
     date: moment().format("YYYY-MM-DD HH:mm:ss"),
     content: commentData.value.content[postId],
   };
 
-  store.dispatch("posts/addComment", {comment, postId});
+  store.dispatch("posts/addComment", { comment, postId });
   commentData.value.content[postId] = "";
 
   // emit("handelComment", postId);
@@ -92,7 +85,7 @@ onUpdated(() => {
         <div class="col-md-4" v-for="post in revposts" :key="post.id">
           <div class="card mb-4">
             <div class="card-body">
-              <h5 class="card-title">{{ post.title }}{{ post.id }}</h5>
+              <h5 class="card-title">{{ post.title }}</h5>
               <h6 class="card-subtitle mb-2 text-body-secondary">
                 {{ moment(post.date).fromNow() }}
               </h6>
@@ -107,21 +100,23 @@ onUpdated(() => {
                 <small
                   @click="showComment(post.id)"
                   :style="{
-                    color: post.comments.length > 0 ? post.comments.length >= 3 ? 'green' : 'black' : 'red',
+                    color:
+                      post.comments.length > 0
+                        ? post.comments.length >= 3
+                          ? 'green'
+                          : 'black'
+                        : 'red',
                     cursor: 'pointer',
                   }"
                 >
-                  <span v-if="post.comments.length==0">No</span> 
-                  <span v-else>{{ post.comments.length }}</span> 
-                  
+                  <span v-if="post.comments.length == 0">No</span>
+                  <span v-else>{{ post.comments.length }}</span>
+
                   comments</small
                 >
               </p>
 
-              <div
-                class="comments mb-3"
-                id="comment"
-              >
+              <div class="comments mb-3" id="comment">
                 <div class="comments-input d-flex mb-3">
                   <input
                     type="text"
@@ -141,7 +136,6 @@ onUpdated(() => {
                   :comments="post.comments"
                   :postID="post.id"
                   :showComments="post.showComments"
-                  @handelDeleteCom="handelDeleteCom"
                 />
               </div>
 
