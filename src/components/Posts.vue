@@ -2,6 +2,11 @@
 import { defineProps, defineEmits, computed, toRefs, defineModel, inject, onUpdated } from "vue";
 import moment from "moment";
 import Comments from "./Comments.vue";
+import Swal from "sweetalert2";
+
+import { useStore } from "vuex";
+
+const store = useStore();
 
 // const props = defineProps({
 //   // posts: {
@@ -19,7 +24,7 @@ const emit = defineEmits([
   "handelDelete",
   "handelLike",
   "showComment",
-  "handelComment",
+  // "handelComment",
   "handelDeleteCom",
 ]);
 
@@ -44,7 +49,26 @@ function handelDeleteCom(commentId, postId) {
   emit("handelDeleteCom", commentId, postId);
 }
 function handelComment(postId) {
-  emit("handelComment", postId);
+  const post = posts.value.find((post) => post.id === postId);
+  if (!commentData.value.content[postId]) {
+    Swal.fire({
+      text: "Please fill the comment field!",
+      icon: "error",
+      confirmButtonText: "ok",
+    });
+    return;
+  }
+  const comment = {
+    id: post.comments.length + 1,
+    // user: store.state.userName || "John Doe",
+    date: moment().format("YYYY-MM-DD HH:mm:ss"),
+    content: commentData.value.content[postId],
+  };
+
+  store.dispatch("posts/addComment", {comment, postId});
+  commentData.value.content[postId] = "";
+
+  // emit("handelComment", postId);
 }
 
 onUpdated(() => {
@@ -68,7 +92,7 @@ onUpdated(() => {
         <div class="col-md-4" v-for="post in revposts" :key="post.id">
           <div class="card mb-4">
             <div class="card-body">
-              <h5 class="card-title">{{ post.title }}</h5>
+              <h5 class="card-title">{{ post.title }}{{ post.id }}</h5>
               <h6 class="card-subtitle mb-2 text-body-secondary">
                 {{ moment(post.date).fromNow() }}
               </h6>

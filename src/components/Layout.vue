@@ -46,7 +46,7 @@ function handelTab(e) {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              {{ userName }}
+              {{ $store.state.userName }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="#">Profile</a></li>
