@@ -12,19 +12,39 @@ import { toRefs, defineProps, defineEmits, computed  } from "vue";
 import { useStore } from "vuex";
 const store = useStore();
 
-const postTitle = computed(() => store.getters["posts/postTitle"]);
-const postContent = computed(() => store.getters["posts/postContent"]);
+// const postTitle = computed(() => store.getters["posts/postTitle"]);
+// const postContent = computed(() => store.getters["posts/postContent"]);
 
 function handelSubmit(event) {
   store.commit("posts/createPost");
 }
 
-function updatePostTitle(event) {
-  store.commit("posts/updatePostTitle", event.target.value);
-}
-function updatePostContent(event) {
-  store.commit("posts/updatePostContent", event.target.value);
-}
+// function updatePostTitle(event) {
+//   store.commit("posts/updatePostTitle", event.target.value);
+// }
+// function updatePostContent(event) {
+//   store.commit("posts/updatePostContent", event.target.value);
+// }
+
+const postTitle = computed({
+  get(){
+    return store.getters["posts/getPostTitle"];
+  },
+  set(){
+    store.commit("posts/updatePostTitle", event.target.value);
+  }
+
+});
+
+const postContent = computed({
+  get(){
+    return store.getters["posts/getPostContent"];
+  },
+  set(){
+    store.commit("posts/updatePostContent", event.target.value);
+  }
+
+});
 </script>
 
 <template>
@@ -42,8 +62,15 @@ function updatePostContent(event) {
                   class="form-control"
                   id="title"
                   placeholder="Enter the title"
-                  :value="postTitle" @input="updatePostTitle"
+                  v-model="postTitle"
                 />
+                <!-- <input
+                  type="text"
+                  class="form-control"
+                  id="title"
+                  placeholder="Enter the title"
+                  :value="postTitle" @input="updatePostTitle"
+                /> -->
               </div>
               <div class="mb-3">
                 <label for="content" class="form-label">Content</label>
@@ -52,8 +79,15 @@ function updatePostContent(event) {
                   id="content"
                   rows="3"
                   placeholder="Enter the content"
-                  :value="postContent" @input="updatePostContent"
+                  v-model="postContent"
                 ></textarea>
+                <!-- <textarea
+                  class="form-control"
+                  id="content"
+                  rows="3"
+                  placeholder="Enter the content"
+                  :value="postContent" @input="updatePostContent"
+                ></textarea> -->
               </div>
               <button type="submit" class="btn btn-success">Submit</button>
             </form>

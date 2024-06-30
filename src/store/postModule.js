@@ -123,16 +123,16 @@ const postModule = {
   },
   actions:{
     async addComment({state, commit, rootState}, {comment, postId}){
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       comment.user = rootState.userName;
       commit('addComment', {comment, postId});
     },
     async deletePost({state, commit}, postId){
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       commit('deletePost', postId);
     },
     async deleteComment({state, commit}, {postId, commentId}){
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       commit('deleteComment', {postId, commentId});
     }
   
