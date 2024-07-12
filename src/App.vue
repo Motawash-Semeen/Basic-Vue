@@ -1,117 +1,52 @@
 <script setup>
-import { computed, ref, watch, provide } from "vue";
-import moment from "moment";
-import Swal from "sweetalert2";
-import Posts from "./components/Posts.vue";
-import Form from "./components/Form.vue";
-import Layout from "./components/Layout.vue";
-
-import { useStore } from "vuex";
+import { ref, computed, watch, provide } from 'vue'
+import Posts from './components/Posts.vue'
+import CreatePost from './components/CreatePost.vue';
+import LayoutContent from './components/LayoutContent.vue';
+import { useStore } from 'vuex';
+import { RouterView } from 'vue-router';
 
 const store = useStore();
 
-const posts = computed(() => store.getters["posts/getPosts"]);
-
+const posts = computed(() => store.getters['posts/getPosts']);
 
 watch(
   () => posts.value.length,
-  (newPostslength, oldPostslength) => {
-    if (newPostslength > oldPostslength) {
-      Swal.fire({
-        text: "Post added successfully!",
-        icon: "success",
-        confirmButtonText: "ok",
-      });
+  (newValue, oldValue) => {
+    if (newValue > oldValue) {
+      alert('A new post has been created!')
     }
-  }
-);
+  },
+  { immediate: true }
+)
 
 watch(
   () => posts.value,
-  (newPosts, oldPosts) => {
-    newPosts.forEach((post) => {
-      if (post.likes == 10 && !post.likesNotified) {
-        post.likesNotified = true;
-        Swal.fire({
-          text: `Post ${post.title} has reached 10 likes!`,
-          icon: "success",
-          confirmButtonText: "ok",
-        });
+  () => {
+    posts.value.forEach((post) => {
+      if (post.likes === 10 && !post.likeConfirmation) {
+        post.likeConfirmation = true
+        alert('A post has reached 10 likes!')
       }
-    });
+    })
   },
   { deep: true }
-);
+)
 
-const formData = ref({
-  title: "",
-  content: "",
-});
+provide('posts', posts);
 
-const commentData = ref({
-  content: {},
-});
-
-function handelLike(postId) {
-  const post = posts.value.find((post) => post.id === postId);
-  post.likes++;
-}
-
-// function handelComment(postId) {
-//   const post = posts.value.find((post) => post.id === postId);
-//   if (!commentData.value.content[postId]) {
-//     Swal.fire({
-//       text: "Please fill the comment field!",
-//       icon: "error",
-//       confirmButtonText: "ok",
-//     });
-//     return;
-//   }
-//   post.comments.push({
-//     id: post.comments.length + 1,
-//     user: "John Doe",
-//     date: moment().format("YYYY-MM-DD HH:mm:ss"),
-//     content: commentData.value.content[postId],
-//   });
-//   commentData.value.content[postId] = "";
-// }
-
-function handelDeleteCom(commentId, postId) {
-  const post = posts.value.find((post) => post.id === postId);
-  post.comments = post.comments.filter((comment) => comment.id !== commentId);
-}
-
-function showComment(postId) {
-  var post = posts.value.find((post) => post.id === postId);
-  post.showComments = !post.showComments;
-}
-
-const currentComp = ref("posts");
-
-function handelTab(e) {
-  if(e.target.innerText === "Posts") {
-    currentComp.value = "posts";
-  } else {
-    currentComp.value = "create-post";
-  }
-}
-
+const currentComp = ref('posts');
 </script>
 
 <template>
-  <Layout :userName="userName" :currentComp="currentComp" @handelTab="handelTab">
-    <Form v-if="currentComp == 'create-post'" :formData="formData" @handelSubmit="handelSubmit" class="bg-light" style="padding: 10px; border-radius: 12px;"/>
-    <Posts
-      v-else-if="currentComp == 'posts'"
-      v-model:comment="commentData"
-      @handelLike="handelLike"
-      @showComment="showComment"
-      @handelDeleteCom="handelDeleteCom"
-    />
-  </Layout>
+    <RouterView />
+  <!-- <LayoutContent @changeComp="(comp) => currentComp = comp" :currentComp="currentComp">
+    <CreatePost v-if="currentComp == 'create-post'" />
+    <Posts v-else-if="currentComp == 'posts'" />
+  </LayoutContent> -->
 </template>
 
-<style scoped>
+<style>
 .cursor-pointer {
   cursor: pointer;
 }
